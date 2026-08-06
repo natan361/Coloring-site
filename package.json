@@ -1,0 +1,31 @@
+{
+  "name": "painting-service-site",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "prebuild": "node generate-sitemap.mjs",
+    "build": "vite build",
+    "sitemap": "node generate-sitemap.mjs",
+    "favicon": "node generate-favicon.mjs",
+    "verify": "node verify.mjs",
+    "preview": "vite preview",
+    "serve": "node serve.mjs",
+    "screenshot": "node screenshot.mjs"
+  },
+  "dependencies": {
+    "gsap": "^3.12.7",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^7.18.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.4",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.5.1",
+    "puppeteer": "^25.3.0",
+    "tailwindcss": "^3.4.17",
+    "vite": "^6.0.11"
+  }
+}

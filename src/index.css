@@ -1,0 +1,209 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+body {
+  background-color: #0f0f10;
+  color: #0f0f10;
+  font-family: 'Assistant', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Rubik (display) ships at weight 400 by default — the reference's headings are heavy and
+   tightly tracked. Set a bold default in the base layer so explicit weight utilities
+   (font-extrabold / font-black) placed on the big hero + section titles still win. */
+@layer base {
+  .font-display {
+    font-weight: 700;
+    letter-spacing: -0.015em;
+  }
+}
+
+::selection {
+  background-color: #c6f53d;
+  color: #0f0f10;
+}
+
+/* grain texture overlay, applied per-section */
+.grain {
+  position: relative;
+  isolation: isolate;
+}
+.grain::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  z-index: 1;
+}
+
+/* Signature motif: a diagonal light sweep on hover — kept subtle and non-hiding, since
+   images should read as vivid/inspiring by default (see [[painting-site-project]] memory:
+   grayscale-until-hover was actively working against the desire/inspiration goal, and most
+   visitors — anyone on touch — never trigger hover at all). The literal "gray -> color"
+   transformation story now lives in the explicit BeforeAfterSlider instead. */
+.paint-reveal {
+  position: relative;
+  overflow: hidden;
+}
+.paint-reveal img {
+  transition: transform 500ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.paint-reveal:hover img,
+.paint-reveal:focus-within img {
+  transform: scale(1.04);
+}
+.paint-reveal::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(100deg, transparent 40%, rgba(198, 245, 61, 0.2) 48%, rgba(198, 245, 61, 0.2) 56%, transparent 64%);
+  transform: translateX(-140%);
+  transition: transform 900ms cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+}
+.paint-reveal:hover::after,
+.paint-reveal:focus-within::after {
+  transform: translateX(140%);
+}
+@media (prefers-reduced-motion: reduce) {
+  .paint-reveal img {
+    transition: none;
+    transform: none !important;
+  }
+  .paint-reveal::after {
+    display: none;
+  }
+}
+
+.blob {
+  filter: blur(60px);
+}
+
+.text-balance {
+  text-wrap: balance;
+}
+
+/* ---------------------------------------------------------------------------
+   Accessibility menu (IS 5568). Each class is toggled on <html> by
+   AccessibilityWidget.jsx. The widget's own chrome is excluded from the
+   visual overrides so its controls stay usable while a mode is active.
+   --------------------------------------------------------------------------- */
+
+/* Skip link — visible only once focused by keyboard. */
+.skip-link {
+  position: absolute;
+  inset-inline-start: 1rem;
+  top: -100px;
+  z-index: 100;
+  border-radius: 999px;
+  background-color: #c6f53d;
+  color: #0f0f10;
+  padding: 0.75rem 1.5rem;
+  font-weight: 700;
+  transition: top 180ms ease-out;
+}
+.skip-link:focus {
+  top: 1rem;
+}
+
+/* Text size — scales the root em, so every rem-based size grows with it. */
+.a11y-font-1 {
+  font-size: 112.5%;
+}
+.a11y-font-2 {
+  font-size: 125%;
+}
+.a11y-font-3 {
+  font-size: 137.5%;
+}
+
+/* High contrast — force black surfaces and pure-white text sitewide.
+   html/body are excluded from the blanket rule below: `:not()` inherits the
+   specificity of its argument, so the universal rule outweighs a plain
+   `body` selector and would reset the page background to white. */
+html.a11y-contrast,
+html.a11y-contrast body {
+  background-color: #000 !important;
+}
+html.a11y-contrast *:not(body):not(.a11y-widget):not(.a11y-widget *) {
+  background-color: transparent !important;
+  background-image: none !important;
+  color: #fff !important;
+  border-color: #fff !important;
+  text-shadow: none !important;
+  box-shadow: none !important;
+}
+html.a11y-contrast a:not(.a11y-widget *),
+html.a11y-contrast button:not(.a11y-widget *) {
+  color: #ffff00 !important;
+  border-color: #ffff00 !important;
+}
+.a11y-contrast img,
+.a11y-contrast video {
+  filter: grayscale(1) contrast(1.25);
+}
+.a11y-contrast .blob,
+.a11y-contrast .grain::before,
+.a11y-contrast .paint-reveal::after {
+  display: none !important;
+}
+
+/* Highlight links — makes every link unmistakable, independent of color. */
+.a11y-links a:not(.a11y-widget *) {
+  text-decoration: underline !important;
+  text-underline-offset: 3px !important;
+  text-decoration-thickness: 2px !important;
+  outline: 2px dashed currentColor;
+  outline-offset: 3px;
+}
+
+/* Readable font — swaps the display face for the body face and loosens spacing. */
+.a11y-readable *:not(.a11y-widget):not(.a11y-widget *) {
+  font-family: 'Assistant', Arial, sans-serif !important;
+  letter-spacing: normal !important;
+  line-height: 1.7 !important;
+}
+
+/* Stop animations — the manual equivalent of prefers-reduced-motion. */
+.a11y-stop-motion *,
+.a11y-stop-motion *::before,
+.a11y-stop-motion *::after {
+  animation: none !important;
+  transition: none !important;
+  scroll-behavior: auto !important;
+}
+.a11y-stop-motion .reveal {
+  opacity: 1 !important;
+  transform: none !important;
+}
+
+/* Large cursor. */
+.a11y-big-cursor,
+.a11y-big-cursor * {
+  cursor:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'%3E%3Cpath d='M8 4l28 18-13 2 7 14-6 3-7-14-9 8z' fill='%23fff' stroke='%23000' stroke-width='2.5' stroke-linejoin='round'/%3E%3C/svg%3E")
+      4 4,
+    auto !important;
+}
