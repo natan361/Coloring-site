@@ -10,8 +10,25 @@ import puppeteer from 'puppeteer'
 import { readFileSync } from 'node:fs'
 
 const BASE = process.env.BASE_URL || 'http://localhost:3050'
+
+// The sitemap holds full production URLs, which may sit under a deploy sub-path
+// (e.g. /Coloring-site/about on GitHub Pages). The dev server serves from the root,
+// so that prefix has to come off — otherwise every request falls through to the
+// catch-all route, renders the home page, and the whole run passes for the wrong reason.
 const sitemap = readFileSync('./public/sitemap.xml', 'utf8')
-const paths = [...sitemap.matchAll(/<loc>https?:\/\/[^/]+(\/[^<]*)?<\/loc>/g)].map((m) => m[1] || '/')
+const urls = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => new URL(m[1]))
+const prefix = process.env.BASE_PATH?.replace(/\/$/, '') ?? findCommonPrefix(urls)
+
+function findCommonPrefix(list) {
+  // The home entry's pathname IS the deploy prefix ('/' when deployed at the root).
+  const shortest = list.map((u) => u.pathname).sort((a, b) => a.length - b.length)[0] || '/'
+  return shortest === '/' ? '' : shortest.replace(/\/$/, '')
+}
+
+const paths = urls.map((u) => {
+  const p = prefix && u.pathname.startsWith(prefix) ? u.pathname.slice(prefix.length) : u.pathname
+  return p || '/'
+})
 
 // Injected into the page: WCAG relative-luminance maths. Foreground alpha is composited
 // over the backdrop, otherwise faded text (e.g. text-white/30) falsely passes.

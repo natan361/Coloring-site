@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://gavan.example.com/sitemap.xml
+Sitemap: https://natan361.github.io/Coloring-site/sitemap.xml

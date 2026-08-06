@@ -27,8 +27,10 @@ export const business = {
   a11yCoordinatorPhone: '050-4821973',
   a11yCoordinatorEmail: 'access@gavan.co.il',
 
-  // Canonical origin. Update if the portfolio copy is hosted elsewhere.
-  siteUrl: 'https://gavan.example.com',
+  // Canonical origin, including the GitHub Pages project sub-path.
+  // Feeds the canonical tags, Open Graph URLs, the sitemap and the JSON-LD.
+  // Change this one line if the site moves to a custom domain.
+  siteUrl: 'https://natan361.github.io/Coloring-site',
 
   // Last review date shown on the legal pages.
   legalUpdated: '6 באוגוסט 2026',
